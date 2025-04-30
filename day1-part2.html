@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 1</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: #f0f0f0;
+    }
+  </style>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script>
+    /** @type {HTMLCanvasElement} */
+    let canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    /** @type {CanvasRenderingContext2D} */
+    const ctx = canvas.getContext('2d'); //initial object
+
+    function Circle(x, y, dx, dy, r) {
+      this.x = x;
+      this.y = y;
+      this.dx = dx;
+      this.dy = dy;
+      this.r = r;
+
+      this.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = `hsla(${(x * 180) / Math.PI}, 100%, 50%, 0.7)`;
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = `hsla(${(x * 180) / Math.PI}, 100%, 50%, 0.7)`;
+        ctx.stroke();
+      };
+
+      this.update = function () {
+        if (this.x + this.r > canvas.width || this.x - this.r < 0)
+          this.dx = -this.dx;
+        if (this.y + this.r > canvas.height || this.y - this.r < 0)
+          this.dy = -this.dy;
+
+        this.x += this.dx;
+        this.y += this.dy;
+
+        this.draw();
+      };
+    }
+
+    const circles = [];
+
+    for (let index = 0; index < 200; index++) {
+      let r = Math.random() * index / 2;
+      let x = Math.random() * (innerWidth - r * 2) + r;
+      let y = Math.random() * (innerHeight - r * 2) + r;
+      let dx = Math.random() - 4;
+      let dy = Math.random() - 4;
+      circles.push(new Circle(x, y, dx, dy, r));
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const circle of circles) {
+        circle.update();
+      }
+    }
+
+    animate();
+  </script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 1</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: #f0f0f0;
+    }
+  </style>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script>
+    /** @type {HTMLCanvasElement} */
+    let canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    /** @type {CanvasRenderingContext2D} */
+    const ctx = canvas.getContext('2d'); //initial object
+    console.log(canvas);
+
+    // ctx.fillStyle = 'green';
+    // ctx.fillRect(10, 10, 150, 100); // x, y, widht, height
+    // ctx.fillStyle = 'blue';
+    // ctx.fillRect(500, 10, 150, 100); // x, y, widht, height
+
+    // // line
+    // ctx.beginPath();
+    // ctx.moveTo(50, 300);
+    // ctx.strokeStyle = 'blue';
+    // ctx.lineTo(50, 500);
+    // ctx.lineTo(300, 500);
+    // ctx.lineTo(300, 300);
+    // ctx.lineTo(50, 300);
+    // ctx.strokeStyle = 'red';
+    // ctx.stroke();
+
+    const balls = [];
+
+    //arc or circle
+    // const x = Math.random() * window.innerWidth;
+    // const y = Math.random() * window.innerHeight;
+    // ctx.beginPath();
+    // ctx.arc(x, y, 30, 0, Math.PI * 2, false); // x, y, radius, start angel, end angel, draw counter clock wise
+    // ctx.stroke();
+
+    for (let index = 0; index < 10; index++) {
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+      balls.push({
+        x,
+        y,
+        radius: 30,
+      });
+    }
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    let angle = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      for (let ball of balls) {
+        angle += 0.01;
+        ball.x = ball.x + 20 * Math.cos(angle);
+        ball.y = ball.y + 20 * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+        ctx.stroke();
+      }
+    }
+
+    animate();
+  </script>
+</html>
+
+<!-- //arc or circle
+for (let index = 0; index < 10; index++) {
+  const x = Math.random() * window.innerWidth;
+  const y = Math.random() * window.innerHeight;
+  ctx.beginPath();
+  ctx.arc(x, y, 30, 0, Math.PI * 2, false); // x, y, radius, start angel, end angel, draw counter clock wise
+  ctx.stroke();
+  balls.push({
+    x: x,
+    y: y,
+    radius: 30,
+    dx: (Math.random() - 0.5) * 5, // kecepatan X (-2.5 s.d 2.5)
+    dy: (Math.random() - 0.5) * 5, // kecepatan Y
+  });
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  // Clear canvas setiap frame
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let ball of balls) {
+    // Update posisi
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // Deteksi tabrakan dengan tepi layar
+    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+      ball.dx = -ball.dx;
+    }
+    if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+      ball.dy = -ball.dy;
+    }
+
+    // Gambar lingkaran
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2, false);
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
+  }
+}
+
+// Mulai animasi
+animate(); -->

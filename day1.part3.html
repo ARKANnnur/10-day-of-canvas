@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 1</title>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: #f0f0f0;
+    }
+  </style>
+  <body>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script>
+    /** @type {HTMLCanvasElement} */
+    let canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    /** @type {CanvasRenderingContext2D} */
+    const ctx = canvas.getContext('2d'); //initial object
+
+    let r = 30;
+    let x = innerWidth / 2;
+    let y = innerHeight / 2;
+    let dx = 10;
+    let dy = 10;
+
+    document.addEventListener('keydown', (event) => {
+      console.log(event.key);
+      if (event.key === 'ArrowUp' && y - r - dy > 0) {
+        y -= dy;
+      }
+      if (event.key === 'ArrowDown' && y + r + dy < innerHeight) {
+        y += dy;
+      }
+      if (event.key === 'ArrowLeft' && x - r - dx > 0) {
+        x -= dx;
+      }
+      if (event.key === 'ArrowRight' && x + r + dx < innerWidth) {
+        x += dx;
+      }
+    });
+
+    const target = {
+      x: 200,
+      y: 200,
+      r: 30,
+    };
+
+    function checkCollision(circle1, circle2) {
+      const dx = circle1.x - circle2.x;
+      const dy = circle1.y - circle2.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance < circle1.r + circle2.r;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+      ctx.beginPath();
+      ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2, false);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'red';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2, false);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'blue';
+      ctx.stroke();
+
+      if (checkCollision({ x, y, r }, target)) {
+        r = 60;
+        target.r = 0;
+      }
+    }
+
+    animate();
+  </script>
+</html>
