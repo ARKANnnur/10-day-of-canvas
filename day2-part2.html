@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+  <body>
+    <div class="fixed flex items-center p-5 gap-x-2">
+      <button class="cursor-pointer rounded-lg font-semibold text-white py-2 px-4 bg-[#2185C5]">Earth</button>
+      <button class="cursor-pointer rounded-lg font-semibold text-white py-2 px-4 bg-[#7ECEFD]">Moon</button>
+      <button class="cursor-pointer rounded-lg font-semibold py-2 px-4 bg-[#FFF6E5]">Mars</button>
+      <button class="cursor-pointer rounded-lg font-semibold text-white py-2 px-4 bg-[#FF7F66]">Jupiter</button>
+      <button class="cursor-pointer rounded-lg font-semibold text-white py-2 px-4 bg-[#7ECEFD]">Space</button>
+    </div>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script src="utils.js"></script>
+  <script src="canvas.js"></script>
+</html>
