@@ -9,9 +9,13 @@
     body {
       margin: 0;
       overflow: hidden;
+      width: 100dvw;
+      height: 100dvh;
     }
     canvas {
       display: block;
+      width: 100dvw;
+      height: 100dvh;
     }
   </style>
   <body>
@@ -23,8 +27,9 @@
     /** @type {CanvasRenderingContext2D} */
     const c = canvas.getContext('2d');
 
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 
     const mouse = {
       x: innerWidth / 2,
@@ -174,36 +179,27 @@
     // Implementation
     function init() {
       particles = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 100; i++) {
         x = Math.random() * (innerWidth - 30 * 10) + 30;
         y = Math.random() * (innerHeight - 30 * 10) + 30;
-        radius = 30;
-        dx = (Math.random() - 0.5) * 10;
-        dy = (Math.random() - 0.5) * 10;
+        radius = 20;
+        dx = (Math.random() - 0.5) * 5;
+        dy = (Math.random() - 0.5) * 5;
 
-        if (i !== 0) {
-          for (let j = 0; j < particles.length; j++) {
-            if (
-              getDistance(x, y, particles[j].x, particles[j].y) <
-              particles[j].radius * 2
-            ) {
-              x = Math.random() * (innerWidth - 30 * 10) + 30;
-              y = Math.random() * (innerHeight - 30 * 10) + 30;
-              j = -1;
-            }
+        for (let j = 0; j < particles.length; j++) {
+          if (
+            getDistance(x, y, particles[j].x, particles[j].y) <
+            particles[j].radius * 2
+          ) {
+            x = Math.random() * (innerWidth - 30 * 10) + 30;
+            y = Math.random() * (innerHeight - 30 * 10) + 30;
+            j = -1;
           }
         }
 
         particles.push(new Particle({ x, y, radius, dx, dy }));
       }
     }
-
-    document.querySelectorAll('button').forEach((button) => {
-      button.addEventListener('click', () => {
-        const env = button.textContent;
-        envChange = env.toLocaleLowerCase();
-      });
-    });
 
     // Animation Loop
     function animate() {

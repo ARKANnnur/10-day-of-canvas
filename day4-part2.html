@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas');
+      const c = canvas.getContext('2d');
+
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+
+      let angle = 0;
+      let centerX = canvas.width / 2;
+      let centerY = canvas.height / 2;
+      let radius = 30;
+
+      const balls = [];
+      const colors = [
+        '#FF2079', // Neon Pink
+        '#FF5F1F', // Vivid Orange
+        '#FFFD38', // Electric Yellow
+        '#39FF14', // Bright Lime Green
+        '#00FFA1', // Aqua Neon
+        '#00E5FF', // Electric Cyan
+        '#4D4DFF', // Vivid Blue
+        '#7A00FF', // Neon Purple
+        '#FF00FF', // Hot Magenta
+        '#FF1493', // Deep Pink
+        '#00FFFF', // Bright Cyan
+        '#ADFF2F', // Green Yellow
+        '#FF4500', // Orange Red
+        '#FF10F0', // Fluorescent Pink
+        '#1AFFD5', // Teal Neon
+        '#FFD700', // Neon Gold
+      ];
+
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1.2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1.2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+      for (let index = 0; index < 100; index++) {
+        radius += 2;
+        angle += 1.2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        balls.push({
+          x,
+          y,
+          radius,
+          angle,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        c.fillStyle = 'rgba(11, 11, 30, 0.2)';
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        balls.forEach((bal) => {
+          const x = centerX + bal.radius * Math.cos(bal.angle);
+          const y = centerY + bal.radius * Math.sin(bal.angle);
+
+          c.beginPath();
+          c.arc(x, y, 5, 0, Math.PI * 2);
+          c.fillStyle = bal.color;
+          c.fill();
+
+          // Ubah sudut biar bola bergerak
+          bal.angle += 0.5; // makin besar = makin cepat
+        });
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
