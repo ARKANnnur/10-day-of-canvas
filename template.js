@@ -1,13 +1,11 @@
-// import { randomIntFromRange, randomColor, distance } from './utils.js';
 /** @type {HTMLCanvasElement} */
-
-/** @type {CanvasRenderingContext2D} */
-
 const canvas = document.querySelector('canvas');
+/** @type {CanvasRenderingContext2D} */
 const c = canvas.getContext('2d');
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+const rect = canvas.getBoundingClientRect();
+canvas.width = rect.width;
+canvas.height = rect.height;
 
 const mouse = {
   x: innerWidth / 2,
@@ -27,81 +25,92 @@ addEventListener('resize', () => {
   init();
 });
 
-// Objects
-class Object {
-  constructor(
-    x = innerWidth / 2,
+const colors = [
+  '#FF6F61',
+  '#FF8C7A',
+  '#E65B4D',
+  '#B34136',
+  '#52D681',
+  '#6EEA98',
+  '#3BBF6C',
+  '#2C9F58',
+  '#5BA9FF',
+  '#82C2FF',
+  '#4291E0',
+  '#2D74B5',
+  '#C66CFF',
+  '#D88EFF',
+  '#A94DDB',
+  '#8432AF',
+];
+
+class Box {
+  constructor({
+    x = innerHeight / 2,
     y = innerHeight / 2,
     radius = 30,
     dx = (Math.random() - 0.5) * 5,
-    dy = 0,
-    environment = envChange
-  ) {
-    const env = ENVIRONMENTS[environment];
-
+    dy = (Math.random() - 0.5) * 5,
+    color = colors[Math.floor(Math.random() * colors.length)],
+  } = {}) {
     this.x = x;
     this.y = y;
     this.radius = radius;
     this.dx = dx;
     this.dy = dy;
-    this.gravity = env.gravity;
-    this.friction = env.friction;
-    this.elasticity = env.elasticity;
-    this.color = env.color;
+    this.color = color;
+    this.velocity = {
+      x: Math.random() - 0.5,
+      y: Math.random() - 0.5,
+    };
   }
 
   draw() {
     c.beginPath();
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    c.fillStyle = this.color;
-    c.fill();
+    c.strokeStyle = this.color;
+    c.stroke();
     c.closePath();
-
-    c.beginPath();
-    c.ellipse(
-      this.x,
-      canvas.height - 5,
-      this.radius * 0.8,
-      this.radius * 0.2,
-      0,
-      0,
-      Math.PI * 2
-    );
-    c.fillStyle = 'rgba(0,0,0,0.2)';
-    c.fill();
   }
 
   update() {
+    this.x += this.dx;
+    this.y += this.dy;
     this.draw();
   }
 }
 
+let boxs;
 // Implementation
-let objects;
 function init() {
-  objects = [];
+  boxs = [];
 
-  for (let i = 0; i < 1; i++) {
-    objects.push(new Object());
-  }
+  boxs.push(new Particle({ x, y, radius, dx, dy }));
 }
 
-document.querySelectorAll('button').forEach((button) => {
-  button.addEventListener('click', () => {
-    const env = button.textContent;
-    envChange = env.toLocaleLowerCase();
-  });
-});
-
 // Animation Loop
+let tx = innerWidth / 2 - 100;
+let ty = innerHeight / 2 - 100;
+let tc = colors[0];
 function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  objects.forEach((object) => {
-    object.update();
-  });
+  if (
+    mouse.x + 75 >= tx &&
+    mouse.x <= tx + 200 + 75 &&
+    mouse.y + 75 >= ty &&
+    mouse.y <= ty + 200 + 75
+  )
+    tc = colors[Math.floor(Math.random() * colors.length)];
+
+  console.log(mouse.x, tx);
+
+  c.fillStyle = colors[5];
+  c.fillRect(mouse.x - 75, mouse.y - 75, 150, 150); // x, y, widht, height
+  c.fillStyle = tc;
+  c.fillRect(tx, ty, 200, 200); // x, y, widht, height
 }
 
-init();
+// init();
 animate();

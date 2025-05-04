@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 5 Part 2</title>
+    <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #111;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      function getRgba({ r, g, b, opacity }) {
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      }
+
+      // Settings (will be controlled via dat.GUI)
+      const settings = {
+        y: canvas.height / 2,
+        amplitude1: 100,
+        frequency1: 0.01,
+        speed1: 0.02,
+
+        amplitude2: 50,
+        frequency2: 0.005,
+        speed2: 0.03,
+
+        amplitude3: 30,
+        frequency3: 0.015,
+        speed3: 0.01,
+        r: 250,
+        g: 70,
+        b: 20,
+        opacity: 0.01,
+      };
+
+      const gui = new dat.GUI();
+      gui.add(settings, 'y', 0, canvas.height).step(10);
+      gui.add(settings, 'amplitude1', 0, 300);
+      gui.add(settings, 'frequency1', 0.001, 0.05);
+      gui.add(settings, 'speed1', 0.001, 0.2);
+
+      gui.add(settings, 'amplitude2', 0, 300);
+      gui.add(settings, 'frequency2', 0.001, 0.05);
+      gui.add(settings, 'speed2', 0.001, 0.2);
+
+      gui.add(settings, 'amplitude3', 0, 300);
+      gui.add(settings, 'frequency3', 0.001, 0.05);
+      gui.add(settings, 'speed3', 0.001, 0.2);
+
+      const color = new dat.GUI();
+      color.add(settings, 'r', 0, 255).step(1);
+      color.add(settings, 'g', 0, 255).step(1);
+      color.add(settings, 'b', 0, 255).step(1);
+      color.add(settings, 'opacity', 0, 1).step(0.01);
+
+      let t = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.09)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        for (let x = 0; x < canvas.width; x++) {
+          const y =
+            settings.y +
+            Math.sin(x * settings.frequency1 + t * settings.speed1) *
+              settings.amplitude1 +
+            Math.sin(x * settings.frequency2 + t * settings.speed2) *
+              settings.amplitude2 +
+            Math.cos(x * settings.frequency3 + t * settings.speed3) *
+              settings.amplitude3;
+          ctx.lineTo(x, y);
+        }
+
+        const rgbaColor = `hsl(${Math.abs(settings.r * Math.sin(t))}, ${
+          settings.g
+        }%, ${settings.b}%)`;
+        ctx.strokeStyle = rgbaColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        t += 1;
+      }
+
+      animate();
+    </script>
+  </body>
+</html>

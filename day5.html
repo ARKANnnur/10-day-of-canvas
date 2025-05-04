@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>day 5 part 1</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      /** @type {HTMLCanvasElement} */
+
+      /** @type {CanvasRenderingContext2D} */
+
+      const canvas = document.querySelector('canvas');
+      const c = canvas.getContext('2d');
+
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+
+      const mouse = {
+        x: innerWidth / 2,
+        y: innerHeight / 2,
+      };
+
+      // Event Listeners
+      addEventListener('mousemove', (event) => {
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+      });
+      addEventListener('mouseout', (event) => {
+        mouse.x = canvas.width / 2;
+        mouse.y = canvas.height / 2;
+      });
+
+      addEventListener('resize', () => {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+
+        init();
+      });
+
+      const colors = [
+        '#FF2079', // Neon Pink
+        '#FF5F1F', // Vivid Orange
+        '#FFFD38', // Electric Yellow
+        '#39FF14', // Bright Lime Green
+        '#00FFA1', // Aqua Neon
+        '#00E5FF', // Electric Cyan
+        '#4D4DFF', // Vivid Blue
+        '#7A00FF', // Neon Purple
+        '#FF00FF', // Hot Magenta
+        '#FF1493', // Deep Pink
+        '#00FFFF', // Bright Cyan
+        '#ADFF2F', // Green Yellow
+        '#FF4500', // Orange Red
+        '#FF10F0', // Fluorescent Pink
+        '#1AFFD5', // Teal Neon
+        '#FFD700', // Neon Gold
+      ];
+      // Objects
+      class Object {
+        constructor(
+          centerX,
+          centerY,
+          x = innerWidth / 2,
+          y = innerHeight / 2,
+          radius = 30,
+          angle,
+          color,
+          size
+        ) {
+          (this.centerX = centerX), (this.centerY = centerY), (this.x = x);
+          this.y = y;
+          this.radius = radius;
+          this.angle = angle;
+          this.color = color;
+          this.size = size;
+        }
+
+        draw() {
+          const x = mouse.x + this.radius * Math.cos(this.angle);
+          const y = mouse.y + this.radius * Math.sin(this.angle);
+
+          c.beginPath();
+          c.arc(x, y, this.size, 0, Math.PI * 2);
+          c.fillStyle = this.color;
+          c.fill();
+
+          this.angle += 0.04;
+        }
+
+        update() {
+          this.draw();
+        }
+      }
+
+      // Implementation
+      let objects;
+      let angle = 0;
+      let centerX = canvas.width / 2;
+      let centerY = canvas.height / 2;
+      let radius = 30;
+      let sizes = [5, 10, 15, 20, 25];
+      let color;
+
+      function init() {
+        objects = [];
+
+        for (let index = 0; index < 15; index++) {
+          const size = sizes[Math.floor(Math.random() * sizes.length)];
+          color = colors[Math.floor(Math.random() * colors.length)];
+          radius += 20;
+          angle += 4;
+          const x = centerX + radius * Math.cos(angle);
+          const y = centerY + radius * Math.sin(angle);
+          objects.push(
+            new Object(centerX, centerY, x, y, radius, angle, color, size)
+          );
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        c.fillStyle = 'rgba(11, 11, 30, 0.2)';
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        objects.forEach((bal) => {
+          bal.update();
+        });
+      }
+
+      init();
+      animate();
+    </script>
+  </body>
+</html>

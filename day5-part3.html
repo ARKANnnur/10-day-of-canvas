@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>day 5 part 3</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ['#FF2079', '#FF5F1F', '#FFFD38', '#39FF14', '#00FFA1'];
+      const particles = [];
+
+      class Particle {
+        constructor(
+          x,
+          y,
+          radius,
+          speeds,
+          gravity = 0.05,
+          friction = 0.98,
+          alpha = 1,
+          shape = 'circle'
+        ) {
+          this.x = x;
+          this.y = y;
+          this.radius = Math.random() * radius;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * speeds;
+          this.dx = Math.cos(angle) * speed;
+          this.dy = Math.sin(angle) * speed;
+          this.gravity = gravity;
+          this.friction = friction;
+          this.alpha = 1;
+          this.shape = shape;
+        }
+
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          ctx.fillStyle = this.color;
+          ctx.strokeStyle = this.color;
+
+          if (this.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (this.shape === 'square') {
+            ctx.fillRect(
+              this.x - this.radius,
+              this.y - this.radius,
+              this.radius * 2,
+              this.radius * 2
+            );
+          } else if (this.shape === 'cross') {
+            ctx.beginPath();
+            ctx.moveTo(this.x - this.radius, this.y);
+            ctx.lineTo(this.x + this.radius, this.y);
+            ctx.moveTo(this.x, this.y - this.radius);
+            ctx.lineTo(this.x, this.y + this.radius);
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        }
+
+        update() {
+          this.dy += this.gravity;
+          this.x += this.dx;
+          this.y += this.dy;
+          this.dx *= this.friction;
+          this.dy *= this.friction;
+          this.alpha -= 0.01;
+          this.draw();
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.update();
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+      }
+
+      canvas.addEventListener('click', (e) => {
+        const shapes = ['circle', 'square', 'cross'];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        for (let i = 0; i < 1000; i++) {
+          particles.push(
+            new Particle(e.clientX, e.clientY, 10, 10, 0.005, 0.98, 1, shape)
+          );
+        }
+      });
+
+      animate();
+    </script>
+  </body>
+</html>
