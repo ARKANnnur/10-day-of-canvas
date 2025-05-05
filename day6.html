@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>day 5 part 3</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      /** @type {HTMLCanvasElement} */
+
+      /** @type {CanvasRenderingContext2D} */
+      const canvas = document.getElementById('canvas');
+      const c = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const mouse = {
+        x: 0,
+        y: 0,
+      };
+
+      class Particle {
+        constructor(
+          x = canvas.width / 2,
+          y = canvas.height / 2,
+          radius = 30,
+          angle,
+          color,
+          size
+        ) {
+          this.x = x;
+          this.y = y;
+          this.radius = radius;
+          this.angle = angle;
+          this.color = color;
+          this.size = size;
+        }
+
+        draw() {
+          const dx = mouse.x - centerX;
+          const dy = mouse.y - centerY;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < radius) {
+            this.angle = Math.atan2(dy, dx);
+          }
+          const x = this.x + this.radius * Math.cos(this.angle);
+          const y = this.y + this.radius * Math.sin(this.angle);
+
+          c.beginPath();
+          c.arc(x, y, this.size, 0, Math.PI * 2);
+          c.fillStyle = this.color;
+          c.fill();
+        }
+
+        update() {
+          this.angle += 0.05;
+          this.draw();
+        }
+      }
+
+      // Implementation
+      let objects;
+      let angle = 0;
+      let centerX = canvas.width / 2;
+      let centerY = canvas.height / 2;
+      let radius = 30;
+      let sizes = [5, 10, 15, 20, 25];
+      let color;
+
+      function init() {
+        objects = [];
+
+        for (let index = 0; index < 20; index++) {
+          const size = (20 - index) * 5;
+          color = `hsl(${Math.floor(Math.random() * 360)}, ${Math.floor(
+            Math.random() * 60 + 40
+          )}%, ${Math.floor(Math.random() * 40 + 30)}%)`;
+
+          radius += 10;
+          angle = 0;
+
+          objects.push(
+            new Particle(
+              canvas.width / 2,
+              canvas.height / 2,
+              radius,
+              angle,
+              color,
+              size
+            )
+          );
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        c.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        objects.forEach((bal) => {
+          bal.update();
+        });
+      }
+
+      addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        gsap.to(mouse, {
+          x: mouse.x,
+          y: mouse.y,
+          duration: 1,
+        });
+      });
+
+      init();
+      animate();
+    </script>
+  </body>
+</html>
