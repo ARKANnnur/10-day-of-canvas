@@ -3,6 +3,7 @@ import { mergeGeometries } from 'https://esm.sh/three@0.160.0/examples/jsm/utils
 import { OrbitControls } from 'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
+const loader = new THREE.TextureLoader();
 
 const camera = new THREE.PerspectiveCamera(
   70, // Field of view (seberapa lebar sudut pandang) ini seperti mata normal
@@ -38,7 +39,7 @@ steveGroup.castShadow = true;
 steveGroup.receiveShadow = true;
 
 // === Light ===
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // cahaya lembut yang menyinari seluruh object rangenya 0 - 1
+const ambientLight = new THREE.AmbientLight(0xffffff, 3); // cahaya lembut yang menyinari seluruh object rangenya 0 - 1
 scene.add(ambientLight);
 const directionalLightPlayer = new THREE.DirectionalLight(0xffffff, 0.8);
 renderer.shadowMap.enabled = true;
@@ -320,12 +321,12 @@ controls.maxDistance = 50; // zoom maksimal
 // Render
 function animate() {
   requestAnimationFrame(animate);
-  const time = Date.now() * 0.002;
-  steveGroup.rotation.y = Math.sin(time) * 0.5;
-  rightHand.rotation.x = (Math.sin(Date.now() * 0.005) * Math.PI) / 6;
-  leftHand.rotation.x = (-Math.sin(Date.now() * 0.005) * Math.PI) / 6;
-  leftLeg.rotation.x = (Math.sin(Date.now() * 0.005) * Math.PI) / 6;
-  rightLeg.rotation.x = (-Math.sin(Date.now() * 0.005) * Math.PI) / 6;
+  // const time = Date.now() * 0.002;
+  // steveGroup.rotation.y = Math.sin(time) * 0.5;
+  // rightHand.rotation.x = (Math.sin(Date.now() * 0.005) * Math.PI) / 6;
+  // leftHand.rotation.x = (-Math.sin(Date.now() * 0.005) * Math.PI) / 6;
+  // leftLeg.rotation.x = (Math.sin(Date.now() * 0.005) * Math.PI) / 6;
+  // rightLeg.rotation.x = (-Math.sin(Date.now() * 0.005) * Math.PI) / 6;
 
   controls.update();
 
@@ -336,26 +337,67 @@ animate();
 const raycaster = new THREE.Raycaster(); // untuk mendeteksi objek yang disentuh oleh mouse.
 const mouse = new THREE.Vector2();
 
-window.addEventListener('click', (event) => {
-  // Konversi posisi mouse ke -1 sampai 1 (NDC)
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+// window.addEventListener('click', (event) => {
+//   // Konversi posisi mouse ke -1 sampai 1 (NDC)
+//   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  // Hitung ray dari kamera ke objek
+//   // Hitung ray dari kamera ke objek
+//   raycaster.setFromCamera(mouse, camera);
+
+//   // Cek apakah mengenai objek
+//   const intersects = raycaster.intersectObjects([steveGroup], true);
+
+//   if (intersects.length > 0) {
+//     const object = intersects[0].object;
+//     object.material.color.set(Math.random() * 0xffffff);
+//     steveGroup.position.set(
+//       -Math.floor(Math.random() * (20 - 5)) + 5,
+//       0,
+//       -Math.floor(Math.random() * (20 - 5)) + 5
+//     );
+//     steveGroup.scale.set(1, 1, Math.random());
+//     steveGroup.rotation.x = degToRad(Math.floor(Math.random() * (120 - 5)) + 5);
+//   }
+// });
+let selectedObject = null;
+
+function getTopGroup(object) {
+  let current = object;
+  while (current.parent && current.parent.type !== 'Scene') {
+    current = current.parent;
+  }
+  return current;
+}
+
+window.addEventListener('mousedown', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
   raycaster.setFromCamera(mouse, camera);
-
-  // Cek apakah mengenai objek
   const intersects = raycaster.intersectObjects([steveGroup], true);
 
   if (intersects.length > 0) {
-    const object = intersects[0].object;
-    object.material.color.set(Math.random() * 0xffffff);
-    steveGroup.position.set(
-      -Math.floor(Math.random() * (20 - 5)) + 5,
-      0,
-      -Math.floor(Math.random() * (20 - 5)) + 5
-    );
-    steveGroup.scale.set(1, 1, Math.random());
-    steveGroup.rotation.x = degToRad(Math.floor(Math.random() * (120 - 5)) + 5);
+    const intersected = intersects[0].object;
+    const topGroup = getTopGroup(intersected);
+    selectedObject = topGroup;
   }
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!selectedObject) return;
+
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const intersection = new THREE.Vector3();
+  raycaster.ray.intersectPlane(planeZ, intersection);
+
+  selectedObject.position.copy(intersection);
+});
+
+window.addEventListener('mouseup', () => {
+  selectedObject = null;
 });
