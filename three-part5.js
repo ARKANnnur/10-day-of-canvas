@@ -1,6 +1,7 @@
 import * as THREE from 'https://esm.sh/three@0.160.0';
 import { mergeGeometries } from 'https://esm.sh/three@0.160.0/examples/jsm/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import * as CANNON from 'https://esm.sh/cannon-es';
 
 const scene = new THREE.Scene();
 const loader = new THREE.TextureLoader();
@@ -25,7 +26,10 @@ grassTexture.wrapS = THREE.RepeatWrapping;
 grassTexture.wrapT = THREE.RepeatWrapping;
 grassTexture.repeat.set(50, 50);
 
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x999999, map: grassTexture });
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x999999,
+  map: grassTexture,
+});
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2; // Supaya datar (horizontal)
 ground.position.y = -4.6; // Di bawah objek
@@ -328,12 +332,14 @@ function animateWave(time) {
   for (let i = 0; i < posAttr.count; i++) {
     const x = posAttr.getX(i);
     const y = posAttr.getY(i);
-    const wave = Math.sin(x * 0.2 + time * 0.002) * Math.cos(y * 0.2 + time * 0.002) * 1;
+    const wave =
+      Math.sin(x * 0.2 + time * 0.002) * Math.cos(y * 0.2 + time * 0.002) * 1;
     posAttr.setZ(i, wave); // Ubah tinggi Z-nya untuk efek gelombang
   }
 
   posAttr.needsUpdate = true; // Wajib supaya perubahan terlihat
 }
+
 // Render
 function animate(time) {
   requestAnimationFrame(animate);
@@ -344,7 +350,7 @@ function animate(time) {
   // leftLeg.rotation.x = (Math.sin(Date.now() * 0.005) * Math.PI) / 6;
   // rightLeg.rotation.x = (-Math.sin(Date.now() * 0.005) * Math.PI) / 6;
 
-  animateWave(time)
+  animateWave(time);
 
   controls.update();
 
@@ -355,29 +361,6 @@ animate();
 const raycaster = new THREE.Raycaster(); // untuk mendeteksi objek yang disentuh oleh mouse.
 const mouse = new THREE.Vector2();
 
-// window.addEventListener('click', (event) => {
-//   // Konversi posisi mouse ke -1 sampai 1 (NDC)
-//   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-//   // Hitung ray dari kamera ke objek
-//   raycaster.setFromCamera(mouse, camera);
-
-//   // Cek apakah mengenai objek
-//   const intersects = raycaster.intersectObjects([steveGroup], true);
-
-//   if (intersects.length > 0) {
-//     const object = intersects[0].object;
-//     object.material.color.set(Math.random() * 0xffffff);
-//     steveGroup.position.set(
-//       -Math.floor(Math.random() * (20 - 5)) + 5,
-//       0,
-//       -Math.floor(Math.random() * (20 - 5)) + 5
-//     );
-//     steveGroup.scale.set(1, 1, Math.random());
-//     steveGroup.rotation.x = degToRad(Math.floor(Math.random() * (120 - 5)) + 5);
-//   }
-// });
 let selectedObject = null;
 
 function getTopGroup(object) {
